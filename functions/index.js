@@ -30,7 +30,7 @@ firebase.initializeApp(firebaseConfig);
 const db = admin.firestore();
 
 
-// Functions Using Express
+// Functions (Using Express)
 // Get Screams
 app.get('/screams', (req, res) => {
     db
@@ -52,11 +52,44 @@ app.get('/screams', (req, res) => {
     .catch(err => console.error(err));
 })
 
+//Firebase Authentication
+const FBAuth = (req, res, next) => {
+    let idToken;
+    if(req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+        idToken = req.headers.authorization.split('Bearer ')[1]; //'Bearer {token}'
+    } else {
+        console.error('No token found');
+        return res.status(403).json({ error: 'Unauthorized'});
+    }
+
+    admin.auth().verifyIdToken(idToken)
+        .then(decodedToken => {
+            req.user = decodedToken;
+            console.log(decodedToken);
+            return db.collection('users')
+                .where('userId', '==', req.user.uid)
+                .limit(1)
+                .get();
+        })
+        .then(data => {
+            req.user.handle = data.docs[0].data().handle;
+            return next();
+        })
+        .catch(err => {
+            console.error('Error while verifying token ', err);
+            return res.status(403).json(err); //err is json
+        })
+}
+
 // Post Scream
-app.post('/scream', (req, res) => {
+app.post('/scream', FBAuth, (req, res) => {
+    if (req.body.body.trim === '') {
+        return res.status(400).json({ body: 'Body must not be empty'});
+    }
+
     const newScream = {
         body: req.body.body,
-        userHandle:req.body.userHandle,
+        userHandle:req.user.handle,
         createdAt: new Date().toISOString()
     };
     db
@@ -66,7 +99,7 @@ app.post('/scream', (req, res) => {
         res.json({message: `document ${doc.id} created succesfully`});
     })
     .catch(err => {
-        res.status(500).json({error: 'something went wrong (Rafael)'});
+        res.status(500).json({error: 'something went wrong'});
         console.error(err);
     });
 })
@@ -78,7 +111,6 @@ const isEmail = (email) => {
     if(email.match(emailRegEx)) return true;
     else return false;
 }
-
 const isEmpty = (string) => {
     if(string.trim() === '') return true;
     else return false;
@@ -106,6 +138,7 @@ app.post('/signup', (req, res) => {
     if(isEmpty(newUser.handle))                         errors.handle = 'Handle must not be empty'
 
     if(Object.keys(errors).length > 0) return res.status(400).json(errors);
+
 
     //Validate Data - Server
     let token, userId;
@@ -184,7 +217,6 @@ app.post('/login', (req, res) => {
             } else return res.status(500).json({error: err.code});
         })
 })
-
 
 
 
