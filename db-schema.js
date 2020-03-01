@@ -10,7 +10,7 @@ let db = {
             website: 'https://user.com',
             location: 'London, UK'
         }
-    ]
+    ],
     screams: [
         {
             userHandle: 'user',
@@ -18,6 +18,14 @@ let db = {
             createdAt: '2020-02-28T01:04:48.925Z',
             likeCount: 5,
             commentCount: 3
+        }
+    ],
+    comments: [
+        {
+            userHandle: 'user',
+            screamId: 'jehnfaiefgalkejb398hfaf',
+            body: 'nice one mate!',
+            createdAt: '2019-03-15T10:59:52.798Z'
         }
     ]
 }

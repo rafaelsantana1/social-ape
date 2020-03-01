@@ -47,7 +47,7 @@ exports.signup = (req, res) => {
             imageUrl: `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/${noImg}?alt=media`,
             userId: userId
         };
-        return db.doc(`/users/ ${newUser.handle}`).set(userCredentials);
+        return db.doc(`/users/${newUser.handle}`).set(userCredentials);
     })
     .then(() => {
         return res.status(201).json({ token: token })
