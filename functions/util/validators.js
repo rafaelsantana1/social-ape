@@ -27,10 +27,10 @@ exports.validateSignupData = (newUser) => {
       }
 }
 
-exports.validateLoginData = (user) => {
+exports.validateLoginData = (data) => {
     let errors = {};
-    if (isEmpty(user.email)) errors.email = "Must not be empty";
-    if (isEmpty(user.password)) errors.password = "Must not be empty";
+    if (isEmpty(data.email)) errors.email = "Must not be empty";
+    if (isEmpty(data.password)) errors.password = "Must not be empty";
     // if(Object.keys(errors).length > 0) return res.status(400).json(errors);
 
     return {

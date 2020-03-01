@@ -1,8 +1,8 @@
-const functions = require('firebase-functions');
+const functions = require('firebase-functions')
 const app = require('express')()
-const { getAllScreams, postOneScream } = require('./handlers/screams')
 const FBAuth = require('./util/fbAuth')
-const { signup, login } = require('./handlers/users')
+const { getAllScreams, postOneScream } = require('./handlers/screams')
+const { signup, login, uploadImage } = require('./handlers/users')
 
 
 //screams routes
@@ -11,6 +11,8 @@ app.post('/scream', FBAuth, postOneScream);
 //users routes
 app.post('/signup', signup);
 app.post('/login', login);
+app.post('/user/image', FBAuth, uploadImage);
+
 
 
 // https://baseurl.com/api/
