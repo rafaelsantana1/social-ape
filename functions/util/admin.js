@@ -17,3 +17,5 @@ const db = admin.firestore();
 
 //Export variables
 module.exports = { admin, serviceAccount, db };
+// module.exports = { admin, db };
+
